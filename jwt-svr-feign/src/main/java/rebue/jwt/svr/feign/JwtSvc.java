@@ -21,7 +21,7 @@ public interface JwtSvc {
      *            组织ID
      */
     @PostMapping("/jwt/sign")
-    JwtSignRo sign(@RequestParam("sysId") String sysId, @RequestParam("userId") String userId, @RequestParam(value = "orgId", required = false) String orgId);
+    JwtSignRo sign(@RequestParam("userId") String userId, @RequestParam("sysId") String sysId, @RequestParam(value = "orgId", required = false) Long orgId);
 
     /**
      * 验证JWT签名

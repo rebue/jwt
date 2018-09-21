@@ -54,7 +54,7 @@ public class JwtCtrl {
      *            用户的组织ID
      */
     @PostMapping("/jwt/sign")
-    public JwtSignRo sign(@RequestParam("sysId") String sysId, @RequestParam("userId") String userId, @RequestParam(value = "orgId", required = false) String orgId) {
+    public JwtSignRo sign(@RequestParam("userId") String userId, @RequestParam("sysId") String sysId, @RequestParam(value = "orgId", required = false) Long orgId) {
         _log.info("\r\n============================= 开始JWT签名 =============================\r\n");
         try {
             _log.info("JWT签名参数: userId={}", userId);
@@ -65,13 +65,16 @@ public class JwtCtrl {
                 ro.setMsg("参数不正确-没有填写用户ID");
                 return ro;
             }
+            if (StringUtils.isBlank(sysId)) {
+                ro.setResult(JwtSignResultDic.PARAM_ERROR);
+                ro.setMsg("参数不正确-没有填写系统ID");
+                return ro;
+            }
 
             try {
                 // Prepare JWT with claims set
                 long now = System.currentTimeMillis();
                 Date expirationTime = new Date(now + expirationMs);
-                if (StringUtils.isBlank(orgId))
-                    orgId = "该用户没有组织ID";
                 JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()//
                         .issuer(iss)                                                // 签发者
                         .issueTime(new Date(now))                                   // 签发时间
@@ -186,14 +189,14 @@ public class JwtCtrl {
                     ro.setMsg(msg);
                     return ro;
                 }
-                String orgId = (String) signedJWT.getJWTClaimsSet().getClaim("orgId");
-                if (StringUtils.isBlank(orgId)) {
-                    String msg = "验证JWT签名失败-用户的组织ID为空";
-                    _log.error("{}: {}", msg, orgId);
-                    ro.setResult(JwtVerifyResultDic.FAIL);
-                    ro.setMsg(msg);
-                    return ro;
-                }
+                Long orgId = (Long) signedJWT.getJWTClaimsSet().getClaim("orgId");
+//                if (StringUtils.isBlank(orgId)) {
+//                    String msg = "验证JWT签名失败-用户的组织ID为空";
+//                    _log.error("{}: {}", msg, orgId);
+//                    ro.setResult(JwtVerifyResultDic.FAIL);
+//                    ro.setMsg(msg);
+//                    return ro;
+//                }
 
                 if (!JwtUtils.verify(key, signedJWT)) {
                     String msg = "验证JWT签名失败-签名不正确";
