@@ -50,6 +50,8 @@ public class JwtCtrl {
      * 
      * @param userId
      *            用户ID
+     * @param sysId
+     *            系统ID
      * @param orgId
      *            用户的组织ID
      */

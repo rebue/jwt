@@ -17,6 +17,8 @@ public interface JwtSvc {
      * 
      * @param userId
      *            用户ID
+     * @param sysId
+     *            系统ID
      * @param orgId
      *            组织ID
      */
