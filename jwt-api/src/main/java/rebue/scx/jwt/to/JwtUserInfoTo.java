@@ -1,4 +1,4 @@
-package rebue.scx.jwt.ro;
+package rebue.scx.jwt.to;
 
 import java.util.Map;
 
@@ -6,23 +6,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import lombok.Data;
-import rebue.scx.jwt.dic.JwtVerifyResultDic;
 
 /**
- * 验证签名的返回结果
+ * 签名中储存的用户信息
  */
 @Data
 @JsonInclude(Include.NON_NULL)
-public class JwtVerifyRo {
-    /**
-     * 验证签名返回结果的代码
-     */
-    private JwtVerifyResultDic  result;
-    /**
-     * 验证签名返回结果的代码信息
-     */
-    private String              msg;
-
+public class JwtUserInfoTo {
     /**
      * 用户ID
      */

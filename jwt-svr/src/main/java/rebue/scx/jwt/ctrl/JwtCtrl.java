@@ -2,6 +2,7 @@ package rebue.scx.jwt.ctrl;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,12 +18,14 @@ import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 
 import rebue.scx.jwt.dic.JwtSignResultDic;
 import rebue.scx.jwt.dic.JwtVerifyResultDic;
 import rebue.scx.jwt.ro.JwtSignRo;
 import rebue.scx.jwt.ro.JwtVerifyRo;
+import rebue.scx.jwt.to.JwtUserInfoTo;
 import rebue.wheel.turing.JwtUtils;
 
 @RestController
@@ -48,26 +52,22 @@ public class JwtCtrl {
     /**
      * JWT签名
      * 
-     * @param userId
-     *            用户ID
-     * @param sysId
-     *            系统ID
-     * @param orgId
-     *            用户的组织ID
+     * @param to
+     *            用户信息
      */
     @PostMapping("/jwt/sign")
-    public JwtSignRo sign(@RequestParam("userId") String userId, @RequestParam("sysId") String sysId, @RequestParam(value = "orgId", required = false) Long orgId) {
+    JwtSignRo sign(@RequestBody JwtUserInfoTo to) {
         _log.info("\r\n============================= 开始JWT签名 =============================\r\n");
         try {
-            _log.info("JWT签名参数: userId={}", userId);
+            _log.info("JWT签名参数: JwtUserInfoTo={}", to);
             JwtSignRo ro = new JwtSignRo();
 
-            if (StringUtils.isBlank(userId)) {
+            if (StringUtils.isBlank(to.getUserId())) {
                 ro.setResult(JwtSignResultDic.PARAM_ERROR);
                 ro.setMsg("参数不正确-没有填写用户ID");
                 return ro;
             }
-            if (StringUtils.isBlank(sysId)) {
+            if (StringUtils.isBlank(to.getSysId())) {
                 ro.setResult(JwtSignResultDic.PARAM_ERROR);
                 ro.setMsg("参数不正确-没有填写系统ID");
                 return ro;
@@ -77,15 +77,16 @@ public class JwtCtrl {
                 // Prepare JWT with claims set
                 long now = System.currentTimeMillis();
                 Date expirationTime = new Date(now + expirationMs);
-                JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()//
+                Builder builder = new JWTClaimsSet.Builder()//
                         .issuer(iss)                                                // 签发者
                         .issueTime(new Date(now))                                   // 签发时间
                         .notBeforeTime(new Date(now))                               // 不接受当前时间在此之前
                         .expirationTime(expirationTime)                             // 过期时间
-                        .claim("sysId", sysId)                                      // 放入系统ID
-                        .claim("userId", userId)                                    // 放入用户ID
-                        .claim("orgId", orgId)                                      // 放入用户的组织ID
-                        .build();
+                        .claim("sysId", to.getSysId())                              // 放入系统ID
+                        .claim("userId", to.getUserId());                           // 放入用户ID
+                if (to.getAddition() != null)
+                    builder = builder.claim("addition", to.getAddition());          // 放入用户的附加信息
+                JWTClaimsSet claimsSet = builder.build();
 
                 // 计算签名
                 String sign = JwtUtils.sign(key, claimsSet);
@@ -98,7 +99,7 @@ public class JwtCtrl {
                 ro.setExpirationTime(expirationTime);
                 return ro;
             } catch (JOSEException e) {
-                String msg = "JWT签名失败: userId=" + userId;
+                String msg = "JWT签名失败: JwtUserInfoTo=" + to;
                 _log.error(msg, e);
                 ro.setResult(JwtSignResultDic.FAIL);
                 ro.setMsg(msg);
@@ -191,14 +192,8 @@ public class JwtCtrl {
                     ro.setMsg(msg);
                     return ro;
                 }
-                Long orgId = (Long) signedJWT.getJWTClaimsSet().getClaim("orgId");
-//                if (StringUtils.isBlank(orgId)) {
-//                    String msg = "验证JWT签名失败-用户的组织ID为空";
-//                    _log.error("{}: {}", msg, orgId);
-//                    ro.setResult(JwtVerifyResultDic.FAIL);
-//                    ro.setMsg(msg);
-//                    return ro;
-//                }
+                @SuppressWarnings("unchecked")
+                Map<String, Object> addition = (Map<String, Object>) signedJWT.getJWTClaimsSet().getClaim("addition");
 
                 if (!JwtUtils.verify(key, signedJWT)) {
                     String msg = "验证JWT签名失败-签名不正确";
@@ -209,12 +204,12 @@ public class JwtCtrl {
                 }
 
                 String msg = "验证JWT签名成功";
-                _log.info("{}: userId={}", msg, orgId);
+                _log.info("{}: userId={}, sysId={}, addtion={}", msg, userId, sysId, addition);
                 ro.setResult(JwtVerifyResultDic.SUCCESS);
                 ro.setMsg(msg);
                 ro.setSysId(sysId);
                 ro.setUserId(userId);
-                ro.setOrgId(orgId);
+                ro.setAddition(addition);
                 return ro;
             } catch (ParseException e) {
                 String msg = "验证JWT签名失败-解析不正确";
