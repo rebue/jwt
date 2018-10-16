@@ -13,8 +13,8 @@
 	<description>JWT签名及验证服务器</description>
 
 	<modules>
-		<module>jwt-svr</module>
 		<module>jwt-api</module>
+		<module>jwt-svr</module>
 		<module>jwt-svr-feign</module>
 	</modules>
 
