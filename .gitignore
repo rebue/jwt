@@ -9,3 +9,4 @@ app.properties
 *.ldb
 .DS_Store
 ~$*.docx
+rebel.xml
