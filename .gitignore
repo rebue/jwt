@@ -10,3 +10,4 @@ app.properties
 .DS_Store
 ~$*.docx
 rebel.xml
+pom.xml.versionsBackup
