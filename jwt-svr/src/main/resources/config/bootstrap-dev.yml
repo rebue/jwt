@@ -3,10 +3,13 @@ debug: true
 server:
   port: 9500
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka/
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
 
 logging:
   config: classpath:config/log4j2.xml
@@ -16,9 +19,3 @@ logging:
     com.netflix.discovery: warn
     org.apache.http.impl.conn: warn
     com.netflix.loadbalancer: warn
-
-zuul:
-  debug:
-    #默认所有的请求都会debug
-    request: true
-  include-debug-header: true

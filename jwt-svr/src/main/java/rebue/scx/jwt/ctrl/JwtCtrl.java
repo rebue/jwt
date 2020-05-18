@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ import rebue.scx.jwt.to.JwtUserInfoTo;
 import rebue.wheel.turing.JwtUtils;
 
 @RestController
+@RefreshScope
 public class JwtCtrl {
     private final static Logger _log = LoggerFactory.getLogger(JwtCtrl.class);
 
@@ -36,24 +38,24 @@ public class JwtCtrl {
      * 签名的key
      */
     @Value("#{'${jwt.key}'.getBytes('utf-8')}")
-    private byte[]              key;
+    private byte[] key;
     /**
      * 签发者
      */
     @Value("${jwt.iss}")
-    private String              iss;
+    private String iss;
     /**
      * 过期分钟数（默认是30分钟）
      * 传入分钟数，自动计算为毫秒数
      */
     @Value("#{${jwt.expiration:30}*60*1000}")
-    private Long                expirationMs;
+    private Long   expirationMs;
 
     /**
      * JWT签名
      * 
      * @param to
-     *            用户信息
+     *           用户信息
      */
     @PostMapping("/jwt/sign")
     JwtSignRo sign(@RequestBody final JwtUserInfoTo to) {
@@ -75,9 +77,9 @@ public class JwtCtrl {
 
             try {
                 // Prepare JWT with claims set
-                final long now = System.currentTimeMillis();
+                final long now            = System.currentTimeMillis();
                 final Date expirationTime = new Date(now + expirationMs);
-                Builder builder = new JWTClaimsSet.Builder()//
+                Builder    builder        = new JWTClaimsSet.Builder()//
                         .issuer(iss)                                                // 签发者
                         .issueTime(new Date(now))                                   // 签发时间
                         .notBeforeTime(new Date(now))                               // 不接受当前时间在此之前
@@ -116,7 +118,7 @@ public class JwtCtrl {
      * 验证JWT签名
      * 
      * @param toVerifySign
-     *            要验证的签名
+     *                     要验证的签名
      */
     @GetMapping("/jwt/verify")
     JwtVerifyRo verify(@RequestParam("toVerifySign") final String toVerifySign) {
@@ -194,7 +196,8 @@ public class JwtCtrl {
                     return ro;
                 }
                 @SuppressWarnings("unchecked")
-                final Map<String, Object> addition = (Map<String, Object>) signedJWT.getJWTClaimsSet().getClaim("addition");
+                final Map<String, Object> addition = (Map<String, Object>) signedJWT.getJWTClaimsSet()
+                        .getClaim("addition");
 
                 if (!JwtUtils.verify(key, signedJWT)) {
                     final String msg = "验证JWT签名失败-签名不正确";
