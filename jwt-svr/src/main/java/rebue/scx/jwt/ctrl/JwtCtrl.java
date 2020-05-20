@@ -22,6 +22,13 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTClaimsSet.Builder;
 import com.nimbusds.jwt.SignedJWT;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import rebue.scx.jwt.dic.JwtSignResultDic;
 import rebue.scx.jwt.dic.JwtVerifyResultDic;
 import rebue.scx.jwt.ro.JwtSignRo;
@@ -55,8 +62,13 @@ public class JwtCtrl {
      * JWT签名
      * 
      * @param to
-     *           用户信息
+     *           签名中储存的用户信息
      */
+    @Operation(summary = "JWT签名")
+    @Parameters({ @Parameter(name = "JwtUserInfoTo", description = "签名中储存的用户信息") })
+    @ApiResponses({ //
+            @ApiResponse(description = "JWT签名的结果", //
+                    content = @Content(mediaType = "application/json; charset=utf-8", schema = @Schema(implementation = JwtSignRo.class))) })
     @PostMapping("/jwt/sign")
     JwtSignRo sign(@RequestBody final JwtUserInfoTo to) {
         _log.info("\r\n============================= 开始JWT签名 =============================\r\n");
@@ -120,6 +132,12 @@ public class JwtCtrl {
      * @param toVerifySign
      *                     要验证的签名
      */
+    @Operation(summary = "验证JWT签名")
+    @Parameters({ @Parameter(name = "toVerifySign", description = "要验证的签名") })
+    @ApiResponses({ //
+            @ApiResponse(//
+                    description = "验证JWT签名的结果", //
+                    content = @Content(mediaType = "application/json; charset=utf-8", schema = @Schema(implementation = JwtVerifyRo.class))) })
     @GetMapping("/jwt/verify")
     JwtVerifyRo verify(@RequestParam("toVerifySign") final String toVerifySign) {
         _log.info("\r\n============================= 开始验证JWT签名 =============================\r\n");
