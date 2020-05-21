@@ -19,22 +19,23 @@ import rebue.wheel.http.impl.OkHttpClientImpl;
 
 public class JwtTests {
 
-    private final String       _hostUrl      = "http://localhost:9500";
-    private final String       _userId       = "1";
+//    private final String       _hostUrl      = "http://localhost:9500";
+    private final String _hostUrl = "http://localhost:8080/jwt-svr";
+    private final String _userId  = "1";
 
-    private final String       _wxOpenId     = "oqTsm0gdD148UcBzibH4JTm2d9q4";
-    private final String       _wxUnionId    = "oqTsm0gdD148UcBzibH4JTm2d9q4";
-    private final String       _orgId        = "517928358546243584";
+    private final String _wxOpenId  = "oqTsm0gdD148UcBzibH4JTm2d9q4";
+    private final String _wxUnionId = "oqTsm0gdD148UcBzibH4JTm2d9q4";
+    private final String _orgId     = "517928358546243584";
 
     private final ObjectMapper _objectMapper = new ObjectMapper();
 
-    private final HttpClient   _httpClient    = new OkHttpClientImpl();
+    private final HttpClient _httpClient = new OkHttpClientImpl();
 
     @Test
     public void test01() throws IOException {
         // JWT签名
-        String url = _hostUrl + "/jwt/sign";
-        final JwtUserInfoTo to = new JwtUserInfoTo();
+        String              url = _hostUrl + "/jwt/sign";
+        final JwtUserInfoTo to  = new JwtUserInfoTo();
         to.setUserId(_userId);
         to.setSysId("damai-admin");
         final Map<String, Object> addition = new LinkedHashMap<>();
@@ -42,8 +43,9 @@ public class JwtTests {
         addition.put("wxUnionId", _wxUnionId);
         addition.put("orgId", _orgId);
         to.setAddition(addition);
-        final String jsonParams = _objectMapper.writeValueAsString(to);
-        final JwtSignRo signRo = _objectMapper.readValue(_httpClient.postByJsonParams(url, jsonParams), JwtSignRo.class);
+        final String    jsonParams = _objectMapper.writeValueAsString(to);
+        final JwtSignRo signRo     = _objectMapper.readValue(_httpClient.postByJsonParams(url, jsonParams),
+                JwtSignRo.class);
         Assert.assertNotNull(signRo);
         System.out.println(signRo);
         Assert.assertEquals(JwtSignResultDic.SUCCESS, signRo.getResult());
