@@ -76,7 +76,7 @@ public class JwtCtrl {
             _log.info("JWT签名参数: JwtUserInfoTo={}", to);
             final JwtSignRo ro = new JwtSignRo();
 
-            if (StringUtils.isBlank(to.getUserId())) {
+            if (to.getUserId() == null) {
                 ro.setResult(JwtSignResultDic.PARAM_ERROR);
                 ro.setMsg("参数不正确-没有填写用户ID");
                 return ro;
@@ -99,7 +99,7 @@ public class JwtCtrl {
                         .claim("sysId", to.getSysId())                              // 放入系统ID
                         .claim("userId", to.getUserId());                           // 放入用户ID
                 if (to.getAddition() != null) {
-                    builder = builder.claim("addition", to.getAddition());          // 放入用户的附加信息
+                    builder = builder.claim("addition", to.getAddition());          // 放入签名的附加信息
                 }
                 final JWTClaimsSet claimsSet = builder.build();
 
@@ -205,8 +205,8 @@ public class JwtCtrl {
                     ro.setMsg(msg);
                     return ro;
                 }
-                final String userId = (String) signedJWT.getJWTClaimsSet().getClaim("userId");
-                if (StringUtils.isBlank(userId)) {
+                final Long userId = (Long) signedJWT.getJWTClaimsSet().getClaim("userId");
+                if (userId == null) {
                     final String msg = "验证JWT签名失败-用户ID为空";
                     _log.error("{}: {}", msg, userId);
                     ro.setResult(JwtVerifyResultDic.FAIL);

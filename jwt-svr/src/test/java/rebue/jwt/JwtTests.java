@@ -13,19 +13,18 @@ import rebue.scx.jwt.dic.JwtSignResultDic;
 import rebue.scx.jwt.dic.JwtVerifyResultDic;
 import rebue.scx.jwt.ro.JwtSignRo;
 import rebue.scx.jwt.ro.JwtVerifyRo;
-import rebue.scx.jwt.to.JwtUserInfoTo;
 import rebue.wheel.http.HttpClient;
 import rebue.wheel.http.impl.OkHttpClientImpl;
 
 public class JwtTests {
 
-//    private final String       _hostUrl      = "http://localhost:9500";
-    private final String _hostUrl = "http://localhost:8080/jwt-svr";
-    private final String _userId  = "1";
+    private final String _hostUrl = "http://localhost:9500";
+//    private final String _hostUrl = "http://localhost:8080/jwt-svr";
+    private final Long _userId = 517928358546243583L;
 
     private final String _wxOpenId  = "oqTsm0gdD148UcBzibH4JTm2d9q4";
     private final String _wxUnionId = "oqTsm0gdD148UcBzibH4JTm2d9q4";
-    private final String _orgId     = "517928358546243584";
+    private final Long   _orgId     = 517928358546243584L;
 
     private final ObjectMapper _objectMapper = new ObjectMapper();
 
@@ -36,12 +35,12 @@ public class JwtTests {
         // JWT签名
         String              url = _hostUrl + "/jwt/sign";
         final JwtUserInfoTo to  = new JwtUserInfoTo();
-        to.setUserId(_userId);
+        to.setUserId(_userId.toString());
         to.setSysId("damai-admin");
         final Map<String, Object> addition = new LinkedHashMap<>();
         addition.put("wxOpenId", _wxOpenId);
         addition.put("wxUnionId", _wxUnionId);
-        addition.put("orgId", _orgId);
+        addition.put("orgId", _orgId.toString());
         to.setAddition(addition);
         final String    jsonParams = _objectMapper.writeValueAsString(to);
         final JwtSignRo signRo     = _objectMapper.readValue(_httpClient.postByJsonParams(url, jsonParams),

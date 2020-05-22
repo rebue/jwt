@@ -11,7 +11,8 @@ import io.swagger.v3.oas.annotations.info.Info;
         version = "1.2.0", //
         description = "基于SpringCloud架构提供JWT服务"//
 ))
-@SpringCloudApplication
+@SpringCloudApplication()
+//@ComponentScan(basePackages = { "rebue" })
 public class JwtApplication {
 
     public static void main(final String[] args) {

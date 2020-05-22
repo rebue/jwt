@@ -19,7 +19,7 @@ public class JwtUserInfoTo {
      * 用户ID
      */
     @Schema(description = "用户ID")
-    private String              userId;
+    private Long                userId;
     /**
      * 系统ID
      */

@@ -1,4 +1,7 @@
-package rebue.scx.jwt.ro;
+/**
+ * 重写JwtUserInfoTo 类方便测试模拟前端，如果是Long的实际传的是字符串
+ */
+package rebue.jwt;
 
 import java.util.Map;
 
@@ -7,31 +10,19 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import rebue.scx.jwt.dic.JwtVerifyResultDic;
 
 /**
- * 验证签名的返回结果
+ * 签名中储存的用户信息
  */
-@Schema(description = "验证签名的返回结果")
+@Schema(description = "签名中储存的用户信息")
 @Data
 @JsonInclude(Include.NON_NULL)
-public class JwtVerifyRo {
-    /**
-     * 验证签名返回结果的代码
-     */
-    @Schema(description = "验证签名返回结果的代码")
-    private JwtVerifyResultDic result;
-    /**
-     * 验证签名返回结果的代码信息
-     */
-    @Schema(description = "验证签名返回结果的代码信息")
-    private String             msg;
-
+public class JwtUserInfoTo {
     /**
      * 用户ID
      */
     @Schema(description = "用户ID")
-    private Long                userId;
+    private String              userId;
     /**
      * 系统ID
      */
