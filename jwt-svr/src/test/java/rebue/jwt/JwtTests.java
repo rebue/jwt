@@ -18,12 +18,12 @@ import rebue.wheel.http.impl.OkHttpClientImpl;
 
 public class JwtTests {
 
-//    private final String _hostUrl = "http://localhost:9500";
-    private final String       _hostUrl      = "http://localhost:8080/jwt-svr";
+    private final String       _hostUrl      = "http://localhost:9500";
+//    private final String       _hostUrl      = "http://localhost:8080/jwt-svr";
     private final Long         _userId       = 517928358546243583L;
 
     private final String       _wxOpenId     = "oqTsm0gdD148UcBzibH4JTm2d9q4";
-    private final String       _wxUnionId    = "oqTsm0gdD148UcBzibH4JTm2d9q4";
+    private final String       _wxUnionId    = "oqTsm0gdD148UcBzibH4JTm2d9q5";
     private final Long         _orgId        = 517928358546243584L;
 
     private final ObjectMapper _objectMapper = new ObjectMapper();
