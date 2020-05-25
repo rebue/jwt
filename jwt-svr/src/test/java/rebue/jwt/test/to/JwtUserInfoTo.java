@@ -1,7 +1,7 @@
 /**
  * 重写JwtUserInfoTo 类方便测试模拟前端，如果是Long的实际传的是字符串
  */
-package rebue.jwt;
+package rebue.jwt.test.to;
 
 import java.util.Map;
 
